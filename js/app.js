@@ -122,23 +122,31 @@
   /* ---------- Card ---------- */
   function cardFront(role, sc, playerLabel) {
     const quiet = role.rule.type === 'ask';
-    const stamp = quiet
-      ? `<p class="stamp stamp--ask">Only share if someone asks about <strong>${esc(role.rule.topic)}</strong></p>`
-      : `<p class="stamp stamp--free">Speak freely</p>`;
+    const rule = quiet
+      ? `<p class="rule rule--ask">Only share if someone asks about ${esc(role.rule.topic)}</p>`
+      : `<p class="rule rule--free">Speak freely</p>`;
+    const art = role.image
+      ? `<img src="${esc(role.image)}" alt="" width="640" height="640" decoding="async">`
+      : piece('piece--art');
+    const visual = (role.visual || []).map((v) => `<li>${esc(v)}</li>`).join('');
     return `
-      <article class="card ${quiet ? 'card--quiet' : 'card--senior'}" aria-label="Your role card: ${esc(role.name)}">
+      <article class="card seat-${role.seat}" aria-label="Your role card: ${esc(role.name)}">
         <header class="card__head">
-          <p class="card__meta"><span>${esc(playerLabel)}</span><span>${esc(sc.short)}</span></p>
-          <h2 class="card__role">${esc(role.name)}</h2>
-          <p class="card__blurb">${esc(role.blurb)}</p>
+          <div class="card__headtext">
+            <p class="card__meta">${esc(playerLabel)} · Seat ${role.seat}</p>
+            <h2 class="card__role">${esc(role.name)}</h2>
+            <p class="card__blurb">${esc(role.blurb)}</p>
+          </div>
+          <div class="card__art">${art}</div>
         </header>
         <div class="card__body">
+          ${role.does ? `<section class="card__does"><h3>What this role does</h3><p>${esc(role.does)}</p></section>` : ''}
           <section class="card__info">
             <h3>Your information</h3>
             <p>${esc(role.info)}</p>
           </section>
-          ${quiet ? `<p class="card__hint">${piece('piece--small')}You hold a missing piece.</p>` : ''}
-          ${stamp}
+          ${visual ? `<div class="card__visual"><h3>Quick visual</h3><ol>${visual}</ol></div>` : ''}
+          ${rule}
         </div>
       </article>`;
   }
@@ -190,8 +198,8 @@
           </div>
           <div class="hero__cards" aria-hidden="true">
             <div class="fan">
-              <div class="fan__card fan__card--a">${cardFront(S.gym.roles[0], S.gym, 'Seat 1')}</div>
-              <div class="fan__card fan__card--b">${cardFront(S.gym.roles[2], S.gym, 'Seat 3')}</div>
+              <div class="fan__card fan__card--a">${cardFront(S.gym.roles[0], S.gym, 'Your role')}</div>
+              <div class="fan__card fan__card--b">${cardFront(S.gym.roles[2], S.gym, 'Your role')}</div>
             </div>
           </div>
         </section>
@@ -314,6 +322,7 @@
       return shell(`
         <section class="brief">
           <div class="brief__text">
+            ${sc.image ? `<img class="brief__img" src="${esc(sc.image)}" alt="" width="640" height="640">` : ''}
             <p class="brief__kicker">Client brief. Read it aloud to the team.</p>
             <h1>${esc(sc.title)}</h1>
             <p class="lead">${esc(sc.team)} In 6 minutes, agree on one plan covering:</p>

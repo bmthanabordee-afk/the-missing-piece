@@ -6,6 +6,7 @@ window.SCENARIOS = {
     id: 'gym',
     letter: 'G',
     short: 'Gym launch',
+    image: 'assets/cards/gym-brief.jpg',
     title: 'Launch a new 24-hour gym in Parramatta',
     team: 'You are a marketing agency team.',
     asks: [
@@ -21,6 +22,9 @@ window.SCENARIOS = {
         name: 'Account Director',
         blurb: 'Senior. You own the client relationship and have the final say.',
         info: 'You already have a plan the client loves: a Friday-night launch party with a DJ, free 7-day trial passes for everyone who attends, and a standard 12-month membership deal on sign-up. You’re confident it will work.',
+        does: 'Owns the client relationship and guides the team toward an approved campaign plan.',
+        visual: ['Event', '7-day trial', '12-month plan'],
+        image: 'assets/cards/gym-seat1.jpg',
         rule: { type: 'free' },
       },
       {
@@ -28,6 +32,9 @@ window.SCENARIOS = {
         name: 'Social Media Lead',
         blurb: 'You run the agency’s social media campaigns.',
         info: 'You’ve mapped out a 4-week Instagram and TikTok ad campaign in English, targeting 18–35 year olds across Western Sydney, using fitness influencers to promote the launch party. It uses the whole budget.',
+        does: 'Plans social content and ads to reach the right audience on the right platforms.',
+        visual: ['4 weeks', 'Social ads', 'Launch party'],
+        image: 'assets/cards/gym-seat2.jpg',
         rule: { type: 'free' },
       },
       {
@@ -35,6 +42,9 @@ window.SCENARIOS = {
         name: 'Junior Designer',
         blurb: 'You grew up in Parramatta. You’re new and don’t like interrupting.',
         info: 'Many locals speak Hindi, Arabic or Mandarin at home. English-only ads miss a large group.',
+        does: 'Turns campaign ideas into clear, appealing visuals for the intended audience.',
+        visual: ['Local voices', 'Language', 'Reach'],
+        image: 'assets/cards/gym-seat3.jpg',
         rule: { type: 'ask', topic: 'the local community or who lives in Parramatta' },
         piece: {
           label: 'Ads in several languages',
@@ -46,6 +56,9 @@ window.SCENARIOS = {
         name: 'Data Analyst',
         blurb: 'You’re quiet and spend most of your time with survey results.',
         info: 'Survey result: the top barrier to joining a gym locally is no women-only training times.',
+        does: 'Uses research and survey results to identify customer needs and barriers.',
+        visual: ['Survey', 'Barrier', 'Access'],
+        image: 'assets/cards/gym-seat4.jpg',
         rule: { type: 'ask', topic: 'customer research or why people don’t join gyms' },
         piece: {
           label: 'Women-only training times',
@@ -57,6 +70,9 @@ window.SCENARIOS = {
         name: 'Intern',
         blurb: 'It’s your second week. You’re not sure your view counts.',
         info: 'Local uni students prefer flexible weekly memberships over 12-month contracts.',
+        does: 'Supports the team and contributes a new perspective while learning the work.',
+        visual: ['Students', 'Flexible weeks', 'Membership'],
+        image: 'assets/cards/gym-seat5.jpg',
         rule: { type: 'ask', topic: 'students, pricing or membership options' },
         piece: {
           label: 'Flexible weekly memberships',
@@ -85,6 +101,8 @@ window.SCENARIOS = {
         name: 'Events Manager',
         blurb: 'Senior. You have the final say on events.',
         info: 'You’ve booked the Thursday-night campus bar for a welcome party: free drink tokens, a DJ, and speeches from the Dean on the main stage.',
+        does: 'Runs campus events and signs off the venue, program and budget.',
+        visual: ['Thursday night', 'Campus bar', 'Dean’s speech'],
         rule: { type: 'free' },
       },
       {
@@ -92,6 +110,8 @@ window.SCENARIOS = {
         name: 'Marketing Coordinator',
         blurb: 'You run the student comms channels.',
         info: 'An English-only Instagram campaign and one all-student email sent 2 days before. It’s ready to go and uses the whole promotion budget.',
+        does: 'Plans student comms so the right people hear about events in time.',
+        visual: ['Instagram', 'One email', '2 days before'],
         rule: { type: 'free' },
       },
       {
@@ -99,6 +119,8 @@ window.SCENARIOS = {
         name: 'International Student Ambassador',
         blurb: 'You arrived from overseas last year. You’re new to the team and don’t like to interrupt.',
         info: 'Many new students don’t drink alcohol for religious or cultural reasons. A bar-based event signals “not for you”.',
+        does: 'Helps new international students settle in and feel they belong.',
+        visual: ['Backgrounds', 'Alcohol-free', 'Belonging'],
         rule: { type: 'ask', topic: 'who the students are or their backgrounds' },
         piece: {
           label: 'An alcohol-free event',
@@ -110,6 +132,8 @@ window.SCENARIOS = {
         name: 'Accessibility Officer',
         blurb: 'You’re quiet and work behind the scenes.',
         info: 'The bar’s stage has no ramp and no hearing loop. About 1 in 5 students have registered a disability or health condition.',
+        does: 'Makes sure every student can get in, take part and follow what’s said.',
+        visual: ['Ramp', 'Hearing loop', '1 in 5'],
         rule: { type: 'ask', topic: 'the venue or access needs' },
         piece: {
           label: 'An accessible venue, captioned speeches',
@@ -121,6 +145,8 @@ window.SCENARIOS = {
         name: 'Mature-Age Student Rep',
         blurb: 'You study part-time. You’re not sure the team takes your view seriously.',
         info: 'Many commencing students work evenings or have caring responsibilities. A Thursday-night event shuts them out.',
+        does: 'Speaks up for part-time, working and carer students.',
+        visual: ['Work', 'Caring', 'Daytime'],
         rule: { type: 'ask', topic: 'timing or students’ other commitments' },
         piece: {
           label: 'A daytime slot, or a choice of times',

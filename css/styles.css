@@ -120,39 +120,55 @@ h1 {
   border: 2px solid var(--ink); border-radius: var(--r-card);
   overflow: hidden;
 }
-.card__head { padding: 22px 24px 20px; }
-.card__meta {
-  display: flex; justify-content: space-between; gap: 12px;
-  font-size: 14px; font-weight: 600; color: var(--ink-2);
+/* Seat colours follow the redesigned printed cards, deepened slightly so
+   white text on every header passes 4.5:1 contrast. */
+.seat-1 { --seat: #1f5a49; --bar: #f06a43; --rule-bg: #f06a43; --rule-ink: #12261f; }
+.seat-2 { --seat: #1d7a73; --bar: #f2b230; --rule-bg: #f2b230; --rule-ink: #12261f; }
+.seat-3 { --seat: #6e4f96; --bar: #f06a43; --rule-bg: #fdece7; --rule-ink: #a8381a; }
+.seat-4 { --seat: #3a6b98; --bar: #f2b230; --rule-bg: #fdf1dc; --rule-ink: #7a4f00; }
+.seat-5 { --seat: #b8432c; --bar: #1d7a73; --rule-bg: #e3f2f0; --rule-ink: #12615b; }
+
+.card { border: 0; box-shadow: inset 0 0 0 2px #d5ddd8; }
+.card__head {
+  display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: start;
+  background: var(--seat); color: var(--on-dark);
+  padding: 20px 20px 18px 22px;
 }
+.card__meta { font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, .86); }
 .card__role {
-  margin-top: 10px;
-  font: 700 clamp(34px, 9vw, 44px)/0.95 var(--display); text-transform: uppercase; letter-spacing: -0.01em;
+  margin-top: 8px;
+  font: 700 clamp(30px, 8vw, 38px)/0.98 var(--display); text-transform: uppercase; letter-spacing: -0.005em;
+  overflow-wrap: anywhere;
 }
-.card__blurb { margin-top: 10px; font-size: 16px; line-height: 1.45; }
-.card--senior .card__head { background: var(--forest); color: var(--on-dark); }
-.card--senior .card__meta { color: var(--on-dark-2); }
-.card__body { flex: 1; display: flex; flex-direction: column; gap: 16px; padding: 0 24px 24px; }
-.card--senior .card__body { padding-top: 20px; }
-.card__info {
-  background: var(--tint); border-radius: 10px; padding: 16px 18px;
-  box-shadow: inset 5px 0 0 var(--coral);
+.card__blurb { margin-top: 10px; font-size: 15px; line-height: 1.45; }
+.card__art {
+  width: 104px; height: 104px; border-radius: 12px; overflow: hidden;
+  background: rgba(255, 255, 255, .14); box-shadow: 0 0 0 3px rgba(255, 255, 255, .9);
+  display: grid; place-items: center;
 }
-.card__info h3 { font: 600 14px/1.3 var(--text); color: var(--ink-2); margin-bottom: 6px; }
+.card__art img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.piece--art { width: 64px; height: 64px; color: rgba(255, 255, 255, .85); }
+.card__body { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 18px 20px 20px; }
+.card__does, .card__info { border-radius: 10px; padding: 12px 16px; box-shadow: inset 5px 0 0 var(--bar); }
+.card__does { background: #fff8ea; }
+.card__info { background: var(--tint); padding: 14px 16px; }
+.card__does h3, .card__info h3, .card__visual h3 { font: 600 13px/1.3 var(--text); color: var(--ink-2); margin-bottom: 4px; }
+.card__does p { font-size: 15px; line-height: 1.45; }
 .card__info p { font-size: 17px; line-height: 1.5; }
-.card__hint { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: var(--rust); }
-.stamp {
-  margin-top: auto; align-self: flex-start; max-width: 94%;
-  padding: 9px 14px; border: 3px solid currentColor; border-radius: 4px;
-  font: 600 17px/1.2 var(--display); text-transform: uppercase; letter-spacing: .01em;
-  transform: rotate(-2deg);
+.card__visual ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
+.card__visual li { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; }
+.card__visual li::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--bar); flex: none; }
+.card__visual li + li::before { width: auto; height: auto; border-radius: 0; background: none; content: '→'; color: var(--bar); font-weight: 700; }
+.rule {
+  margin-top: auto; padding: 11px 16px; border-radius: 8px;
+  background: var(--rule-bg); color: var(--rule-ink);
+  font: 600 16px/1.25 var(--display); text-transform: uppercase; letter-spacing: .01em;
 }
-.stamp strong { font-weight: 700; }
-.stamp--ask { color: var(--rust); }
-.stamp--free { color: var(--stone); }
+.rule--free { align-self: flex-start; padding: 10px 22px; }
+.rule--ask { text-align: center; }
 
 .card--back {
-  background: var(--forest); color: var(--on-dark); border-color: var(--forest-2);
+  background: var(--forest); color: var(--on-dark); box-shadow: none;
   align-items: center; justify-content: center; gap: 28px; min-height: 100%;
 }
 .card__pattern { display: grid; grid-template-columns: repeat(2, 72px); gap: 6px; }
@@ -163,7 +179,7 @@ h1 {
 .card__backtitle { font: 700 26px/1 var(--display); text-transform: uppercase; }
 
 /* Flip */
-.flip { width: min(100%, 380px); perspective: 1600px; }
+.flip { width: min(100%, 420px); perspective: 1600px; }
 .flip__inner {
   display: grid; transform-style: preserve-3d;
   transition: transform .6s var(--ease);
@@ -179,12 +195,13 @@ h1 {
 }
 .hero h1 { font-size: clamp(60px, 10.5vw, 148px); line-height: .9; color: var(--forest); }
 .hero__cards { display: flex; justify-content: center; }
-.fan { position: relative; width: min(100%, 580px); height: 500px; }
-.fan__card { position: absolute; top: 0; width: 320px; height: 470px; }
+.fan { position: relative; width: min(100%, 580px); height: 520px; }
+.fan__card { position: absolute; top: 0; width: 400px; }
 .fan__card .card { pointer-events: none; }
-.fan__card--a { left: 0; transform: rotate(-6deg); transform-origin: bottom center; }
-.fan__card--b { right: 0; top: 22px; transform: rotate(5deg); transform-origin: bottom center; }
-.fan__card .card__role { font-size: 38px; }
+/* Fan cards are full-size cards scaled down, so they always match the real card. */
+.fan { --s: .8; }
+.fan__card--a { left: 0; top: 20px; transform: rotate(-6deg) scale(var(--s)); transform-origin: top left; }
+.fan__card--b { right: 0; top: 34px; transform: rotate(5deg) scale(var(--s)); transform-origin: top right; }
 .how { background: var(--paper); border-radius: 20px; padding: clamp(24px, 4vw, 48px); }
 .how h2 { font: 700 clamp(28px, 3.4vw, 40px)/1 var(--display); text-transform: uppercase; }
 .steps {
@@ -260,6 +277,10 @@ legend { font: 600 22px/1.2 var(--display); text-transform: uppercase; margin-bo
 
 /* ---------- Brief + timer ---------- */
 .brief { display: grid; gap: var(--gap); align-items: center; padding-top: clamp(8px, 3vw, 40px); }
+.brief__img {
+  display: block; width: 132px; height: 132px; object-fit: cover; margin-bottom: 20px;
+  border-radius: 14px; box-shadow: 0 0 0 3px rgba(255, 255, 255, .9);
+}
 .brief__kicker { font-size: 16px; font-weight: 600; color: var(--coral); margin-bottom: 14px; }
 .brief .lead { color: var(--on-dark); }
 .brief h1 { font-size: clamp(40px, 4.8vw, 64px); }
@@ -348,7 +369,7 @@ legend { font: 600 22px/1.2 var(--display); text-transform: uppercase; margin-bo
 @media (min-width: 900px) {
   .hero { grid-template-columns: 1.1fr 1fr; }
   .steps { grid-template-columns: repeat(4, 1fr); gap: 32px; }
-  .deal { grid-template-columns: 1fr minmax(340px, 400px); }
+  .deal { grid-template-columns: 1fr minmax(360px, 440px); }
   .deal__card { grid-column: 2; grid-row: 1 / span 2; }
   .deal__extra { grid-column: 1; grid-row: 2; }
   .deal--player { align-items: start; grid-template-rows: auto 1fr; }
@@ -367,17 +388,7 @@ legend { font: 600 22px/1.2 var(--display); text-transform: uppercase; margin-bo
 @media (max-width: 899px) {
   .hero__cards { order: -1; }
   .fan { height: 380px; width: 340px; }
-  .fan__card { width: 230px; height: 330px; transform-origin: center; }
-  .fan__card--a { transform: rotate(-6deg) scale(1); }
-  .fan__card .card__head { padding: 14px 16px; }
-  .fan__card .card__role { font-size: 26px; }
-  .fan__card .card__blurb, .fan__card .card__meta { font-size: 12px; }
-  .fan__card .card__body { padding: 0 16px 16px; gap: 10px; }
-  .fan__card .card--senior .card__body { padding-top: 12px; }
-  .fan__card .card__info { padding: 10px 12px; }
-  .fan__card .card__info p { font-size: 13px; }
-  .fan__card .card__info h3, .fan__card .card__hint { font-size: 12px; }
-  .fan__card .stamp { font-size: 13px; padding: 6px 10px; }
+  .fan { --s: .52; }
 }
 @media (max-width: 600px) {
   .slot__btn { grid-template-columns: 44px 1fr; gap: 6px 14px; padding: 16px; align-items: start; }
