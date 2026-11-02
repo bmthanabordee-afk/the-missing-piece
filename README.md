@@ -18,7 +18,7 @@ python -m http.server 3899
 then open http://localhost:3899.
 
 - **Random roles every round.** The facilitator picks a scenario and team size (4 or 5), and roles are dealt at random.
-- **Two ways to deal:** pass one device around (tap to reveal, hide, pass on), or everyone opens their own card on their phone with a 6-character game code (e.g. `G5 KQ7X`). The code seeds the shuffle, so every phone deals the same roles without a server.
+- **Two ways to deal:** pass one device around (tap to reveal, hide, pass on), or everyone opens their own card on their phone. In phone mode the facilitator's screen lists each player with a personal code: the game code plus their number (e.g. `G5 KQ7X 3`), or a personal link. Each code opens exactly one card, so no two players can get the same role. The game code seeds the shuffle, so every phone deals consistently without a server.
 - **Facilitator screen:** the brief to read aloud, a 6-minute timer (pause, +1 minute, optional nudge, chime at zero), the reveal where each missing piece is slotted in for scoring, and debrief questions for round 1 and round 2.
 - Files: `index.html`, `css/styles.css`, `js/data.js` (all scenario text, edit here), `js/app.js`.
 

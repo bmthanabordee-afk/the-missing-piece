@@ -267,13 +267,32 @@ legend { font: 600 22px/1.2 var(--display); text-transform: uppercase; margin-bo
 /* ---------- Lobby ---------- */
 .lobby { display: grid; gap: var(--gap); align-items: center; padding-top: clamp(8px, 4vw, 56px); }
 .lobby .lead { color: var(--on-dark); }
-.lobby__link { margin-top: 16px; color: var(--on-dark-2); font-size: 15px; word-break: break-all; }
+.lobby__link { margin-top: 16px; color: var(--on-dark-2); font-size: 15px; overflow-wrap: anywhere; }
+.pcode__code b { color: var(--coral); font-weight: inherit; }
 .codebox { background: var(--forest-2); border-radius: 20px; padding: clamp(24px, 4vw, 48px); text-align: center; color: var(--on-dark-2); }
 .codebox__code {
   margin: 8px 0; color: var(--on-dark);
   font: 700 clamp(64px, 11vw, 132px)/1 var(--display); letter-spacing: .04em; white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
+
+.codebox { text-align: left; }
+.pcodes { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.pcode {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 16px;
+  background: var(--forest); border-radius: 12px; padding: 10px 12px 10px 18px;
+}
+.pcode__name { font-size: 18px; font-weight: 600; color: var(--on-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pcode__code {
+  font: 700 clamp(28px, 3.4vw, 40px)/1 var(--display); letter-spacing: .04em; color: var(--on-dark);
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.btn--small { min-height: 44px; padding: 8px 16px; font-size: 15px; }
+@media (max-width: 520px) {
+  .pcode { grid-template-columns: 1fr auto; }
+  .pcode .btn--small { grid-column: 1 / -1; }
+}
+.join .btn { margin-top: 16px; }
 
 /* ---------- Brief + timer ---------- */
 .brief { display: grid; gap: var(--gap); align-items: center; padding-top: clamp(8px, 3vw, 40px); }
@@ -345,7 +364,8 @@ legend { font: 600 22px/1.2 var(--display); text-transform: uppercase; margin-bo
 }
 
 /* ---------- Join ---------- */
-.join { margin-top: 28px; display: grid; gap: 8px; }
+.join { margin-top: 28px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+.join .codeinput { width: 100%; min-width: 0; font-size: clamp(30px, 9vw, 44px); letter-spacing: .08em; }
 .field-label { font: 600 20px/1.2 var(--display); text-transform: uppercase; }
 .codeinput {
   min-height: 76px; text-align: center; text-transform: uppercase;

@@ -21,19 +21,31 @@
     return S[scenarioId].letter + size + r;
   }
 
+  /* A game code is 6 characters (G5KQ7X). A personal code adds the player's
+     number (G5KQ7X3), so each phone opens exactly one card and nobody has to
+     pick a number. */
   function parseCode(raw) {
-    const code = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (code.length !== 6) return null;
+    const all = String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (all.length !== 6 && all.length !== 7) return null;
+    const code = all.slice(0, 6);
     const scenario = Object.values(S).find((s) => s.letter === code[0]);
     const size = Number(code[1]);
     if (!scenario || (size !== 4 && size !== 5)) return null;
     for (const ch of code.slice(2)) if (!ALPHABET.includes(ch)) return null;
-    return { code, scenarioId: scenario.id, size };
+    let player = null;
+    if (all.length === 7) {
+      const n = Number(all[6]);
+      if (!(n >= 1 && n <= size)) return null;
+      player = n - 1;
+    }
+    return { code, scenarioId: scenario.id, size, player };
   }
 
   function prettyCode(code) {
     return code.slice(0, 2) + ' ' + code.slice(2);
   }
+  const personalCode = (code, i) => `${prettyCode(code)} ${i + 1}`;
+  const personalLink = (code, i) => `${location.origin}${location.pathname}#join=${code}${i + 1}`;
 
   function hash(str) {
     let h = 2166136261;
@@ -250,7 +262,7 @@
                 ${opt('mode', 'phones', 'Everyone’s own phone', 'Players join with a game code', state.mode === 'phones')}
               </div>
             </fieldset>
-            ${state.mode === 'pass' ? `<fieldset><legend>Player names</legend><div class="names">${names}</div></fieldset>` : ''}
+            <fieldset><legend>Player names</legend><div class="names">${names}</div></fieldset>
             <div class="actions">
               <button type="submit" class="btn btn--primary">Deal random roles</button>
               <button type="button" class="btn btn--ghost" data-action="home">Back</button>
@@ -293,22 +305,26 @@
 
     lobby() {
       const sc = scenario();
-      const link = `${location.origin}${location.pathname}#join=${state.code}`;
+      const site = `${location.host}${location.pathname}`.replace(/index\.html$/, '');
+      const rows = Array.from({ length: state.size }, (_, i) => `
+        <li class="pcode">
+          <span class="pcode__name">${esc(playerName(i))}</span>
+          <span class="pcode__code">${prettyCode(state.code)} <b>${i + 1}</b></span>
+          <button class="btn btn--ghost-dark btn--small" data-action="copy-link" data-link="${esc(personalLink(state.code, i))}" aria-label="Copy ${esc(playerName(i))}’s link">Copy link</button>
+        </li>`).join('');
       return shell(`
         <section class="lobby">
           <div>
             <h1>Join this game</h1>
-            <p class="lead">Everyone opens this site on their phone, taps <strong>Join with a code</strong>, enters the code and picks their own player number. Count off around the table first so nobody shares a number.</p>
-            <p class="lobby__link">Or share the link: <a href="${esc(link)}">${esc(link)}</a></p>
+            <p class="lead">Each person opens <strong>${esc(site)}</strong> on their phone, taps <strong>Join with a code</strong> and types <strong>their own code</strong> from this list. Every code opens a different card, so nobody gets the same one.</p>
+            <p class="lobby__link">Or send each person their own link with the Copy link buttons.</p>
             <div class="actions">
               <button class="btn btn--primary" data-action="go" data-to="brief">Everyone has a card: read the brief</button>
-              <button class="btn btn--ghost" data-action="copy-link" data-link="${esc(link)}">Copy link</button>
             </div>
           </div>
           <div class="codebox">
-            <p>Game code</p>
-            <p class="codebox__code">${prettyCode(state.code)}</p>
-            <p>${esc(sc.short)} · players 1 to ${state.size}</p>
+            <p>${esc(sc.short)} · ${state.size} players</p>
+            <ol class="pcodes">${rows}</ol>
           </div>
         </section>`, { tone: 'dark', status: `Round ${state.round}` });
     },
@@ -360,7 +376,7 @@
               <span class="slot__text">
                 <strong>${esc(r.piece.label)}</strong>
                 <span>${esc(r.info)}</span>
-                <span class="slot__who">Held by ${esc(state.mode === 'pass' ? playerName(i) : `Player ${i + 1}`)}, the ${esc(r.name)}. The question that unlocks it: ${esc(r.piece.unlock)}</span>
+                <span class="slot__who">Held by ${esc(playerName(i))}, the ${esc(r.name)}. The question that unlocks it: ${esc(r.piece.unlock)}</span>
               </span>
               <span class="slot__state">${on ? 'In the plan' : 'Missed'}</span>
             </button>
@@ -424,21 +440,16 @@
     },
 
     join() {
-      const parsed = parseCode(state.joinCode);
-      const numbers = parsed
-        ? `<fieldset><legend>Your player number</legend><div class="numbers">${Array.from({ length: parsed.size }, (_, i) =>
-            `<button type="button" class="num" data-action="pick-player" data-n="${i}">${i + 1}</button>`).join('')}</div></fieldset>`
-        : '';
       return shell(`
         <section class="panel narrow">
           <h1>Join a game</h1>
-          <p class="lead">Your facilitator has the code on their screen.</p>
+          <p class="lead">Find your name on the facilitator’s screen and type the code next to it. Your card opens as soon as the code is complete.</p>
           <form data-form="join" class="join" novalidate>
-            <label for="code" class="field-label">Game code</label>
+            <label for="code" class="field-label">Your code</label>
             <input id="code" class="codeinput" name="code" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false"
-              maxlength="8" value="${esc(state.joinCode)}" placeholder="G5 ABCD" aria-describedby="code-help" data-action="joincode">
-            <p id="code-help" class="help ${state.joinError ? 'help--error' : ''}" ${state.joinError ? 'role="alert"' : ''}>${esc(state.joinError || '6 characters, for example G5 KQ7X')}</p>
-            ${numbers}
+              maxlength="12" value="${esc(state.joinCode)}" placeholder="G5 KQ7X 3" aria-describedby="code-help" data-action="joincode">
+            <p id="code-help" class="help ${state.joinError ? 'help--error' : ''}" ${state.joinError ? 'role="alert"' : ''}>${esc(state.joinError || '7 characters: the game code and your player number, for example G5 KQ7X 3')}</p>
+            <button type="submit" class="btn btn--primary">Open my card</button>
           </form>
         </section>`);
     },
@@ -451,7 +462,7 @@
       return shell(`
         <section class="deal deal--player">
           <div class="deal__text">
-            <p class="deal__count">${esc(sc.short)} · game ${prettyCode(p.code)}</p>
+            <p class="deal__count">${esc(sc.short)} · your code ${personalCode(p.code, state.player)}</p>
             <h1>Player ${state.player + 1}</h1>
             <p class="lead">${state.shown ? 'Remember your information and your rule. Keep your screen to yourself.' : 'Tap to see your role. Make sure nobody is looking at your screen.'}</p>
             <div class="actions">
@@ -462,7 +473,7 @@
           <div class="deal__card">${flipCard(role, sc, `Player ${state.player + 1}`, state.shown)}</div>
           <div class="deal__extra">
             ${state.showBrief ? `<div class="minibrief"><h2>${esc(sc.title)}</h2><p>${esc(sc.team)} Agree on one plan covering:</p><ul class="asks">${sc.asks.map((a) => `<li>${esc(a)}</li>`).join('')}</ul></div>` : ''}
-            <button class="linkbtn linkbtn--ink" data-action="leave">Wrong number or code? Change it</button>
+            <button class="linkbtn linkbtn--ink" data-action="leave">Typed the wrong code? Enter it again</button>
           </div>
         </section>`);
     },
@@ -594,9 +605,8 @@
       set({ round: state.round + 1, played: [...state.played, state.scenarioId], scenarioId: sid, screen: 'setup' });
     },
     reset: () => { state = fresh(); save(); render(); },
-    'pick-player': (el) => set({ player: Number(el.dataset.n), shown: false, screen: 'player' }),
     'toggle-brief': () => set({ showBrief: !state.showBrief }, { focus: '[data-action="toggle-brief"]' }),
-    leave: () => set({ screen: 'join', player: null, shown: false }),
+    leave: () => set({ screen: 'join', player: null, shown: false, joinCode: '', joinError: '' }),
     'copy-link': async (el) => {
       try { await navigator.clipboard.writeText(el.dataset.link); el.textContent = 'Link copied'; } catch { el.textContent = 'Copy failed'; }
     },
@@ -626,17 +636,17 @@
       save();
     }
     if (el.dataset.action === 'joincode') {
-      const before = !!parseCode(state.joinCode);
       state.joinCode = el.value;
-      const ok = parseCode(el.value);
-      const clean = el.value.replace(/[^a-z0-9]/gi, '');
-      state.joinError = clean.length >= 6 && !ok ? 'That code doesn’t match a game. Check it with your facilitator.' : '';
+      const p = parseCode(el.value);
+      if (p && p.player != null) { openCard(p); return; }
+      const msg = joinMessage(el.value);
+      const changed = msg !== state.joinError;
+      state.joinError = msg;
       save();
-      if (before !== !!ok || state.joinError) {
+      if (changed) {
         const pos = el.selectionStart;
         render({ focus: '#code' });
-        const input = document.getElementById('code');
-        input?.setSelectionRange(pos, pos);
+        document.getElementById('code')?.setSelectionRange(pos, pos);
       }
     }
   });
@@ -644,14 +654,37 @@
   app.addEventListener('submit', (e) => {
     e.preventDefault();
     if (e.target.dataset.form === 'setup') set(newRound());
+    if (e.target.dataset.form === 'join') {
+      const p = parseCode(state.joinCode);
+      if (p && p.player != null) openCard(p);
+      else set({ joinError: joinMessage(state.joinCode) || 'Type the 7-character code next to your name.' }, { focus: '#code' });
+    }
   });
 
-  /* ---------- Deep link: #join=CODE ---------- */
+  /** Explains what is wrong with a partly typed code, or '' while it is still being typed. */
+  function joinMessage(raw) {
+    const clean = String(raw || '').replace(/[^a-z0-9]/gi, '');
+    const p = parseCode(raw);
+    if (p && p.player == null) return 'That’s the game code. Add your player number at the end, as shown next to your name.';
+    if (clean.length >= 7 && !p) return 'That code doesn’t match. Check the code next to your name on the facilitator’s screen.';
+    return '';
+  }
+
+  function openCard(p) {
+    set({ screen: 'player', joinCode: p.code + (p.player + 1), player: p.player, shown: false, showBrief: false, joinError: '' });
+  }
+
+  /* ---------- Deep link: #join=CODE3 opens that player's card ---------- */
   function readHash() {
     const m = location.hash.match(/join=([A-Za-z0-9]+)/);
     if (m) {
-      state = { ...state, screen: 'join', joinCode: m[1].toUpperCase(), player: null, shown: false, joinError: '' };
       history.replaceState(null, '', location.pathname);
+      const p = parseCode(m[1]);
+      if (p && p.player != null) {
+        state = { ...state, screen: 'player', joinCode: p.code + (p.player + 1), player: p.player, shown: false, showBrief: false, joinError: '' };
+      } else {
+        state = { ...state, screen: 'join', joinCode: m[1].toUpperCase(), player: null, shown: false, joinError: joinMessage(m[1]) };
+      }
       save();
     }
   }
